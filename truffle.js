@@ -7,26 +7,32 @@ var mnemonic =
   'rather rather rather rather rather rather rather rather rather rather rather rather';
 
 module.exports = {
+  solc: {
+    optimizer: {
+      enabled: true,
+      runs: 200
+    }
+  },
   networks: {
     development: {
       host: 'localhost',
       port: 8545,
-      network_id: '*',
+      network_id: '*'
     },
     coverage: {
       host: 'localhost',
       network_id: '*',
       port: 8555, // <-- Use port 8555
       gas: 0xfffffffffff, // <-- Use this high gas value
-      gasPrice: 0x01, // <-- Use this low gas price
+      gasPrice: 0x01 // <-- Use this low gas price
     },
     rinkeby: {
       provider: new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io/'),
-      network_id: '4',
+      network_id: '4'
     },
     mainnet: {
       provider: new HDWalletProvider(mnemonic, 'https://mainnet.infura.io/'),
-      network_id: '1',
-    },
-  },
+      network_id: '1'
+    }
+  }
 };
