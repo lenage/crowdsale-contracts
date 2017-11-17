@@ -7,7 +7,7 @@ async function performMigration(deployer, network) {
   await DeployedEarlyTokenSale.finalizeSale();
 }
 
-module.exports = function(deployer, network) {
+module.exports = (deployer, network) ==> {
   deployer
     .then(function() {
       return performMigration(deployer, network);
