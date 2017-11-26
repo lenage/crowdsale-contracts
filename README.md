@@ -35,7 +35,6 @@ The code for all these contract functions is available at https://github.com/Dat
 ## 6. Join the conversation
 
 * Learn more about DataBroker DAO at — https://databrokerdao.com 
-* Join Slack channel at — https://slack.databrokerdao.com/ 
-* Join DataBroker DAO Telegram channel at — https://t.me/databrokerdao 
+* Join our chat at — https://chat.databrokerdao.com/ 
 * Find DataBroker DAO on Facebook at — https://www.facebook.com/DataBrokerDAO/ 
 * Follow DataBroker DAO on Twitter at — https://twitter.com/DataBrokerDAO
