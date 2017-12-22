@@ -10,18 +10,18 @@ contract EarlyTokenSale is TokenController, Controlled {
     using SafeMath for uint256;
 
     // In UNIX time format - http://www.unixtimestamp.com/
-    uint256 public startFundingTime;       
+    uint256 public startFundingTime;
     uint256 public endFundingTime;
-    
-    // 15% of tokens hard cap, at 1200 tokens per ETH
-    // 225,000,000*0.15 => 33,750,000 / 1200 => 28,125 ETH
-    uint256 constant public maximumFunding = 28125 ether;
-    uint256 constant public tokensPerEther = 1200; 
+
+    // 60% of tokens hard cap, at 3,996,000,000 tokens per ETH
+    // 6,660,000,000*0.6 => 3,996,000,000 / 3,996,000,000 => 1 ETH
+    uint256 constant public maximumFunding = 1 ether;
+    uint256 constant public tokensPerEther = 3996000000;
     uint256 constant public maxGasPrice = 50000000000;
-    
+
     // antispam
     uint256 constant public maxCallFrequency = 100;
-    mapping (address => uint256) public lastCallBlock; 
+    mapping (address => uint256) public lastCallBlock;
 
     // total amount raised in wei
     uint256 public totalCollected;
@@ -34,15 +34,16 @@ contract EarlyTokenSale is TokenController, Controlled {
 
     bool public paused;
     bool public finalized = false;
+    bool public allowChange = true;
 
     /// @param _startFundingTime The UNIX time that the EarlyTokenSale will be able to start receiving funds
     /// @param _endFundingTime   The UNIX time that the EarlyTokenSale will stop being able to receive funds
     /// @param _vaultAddress     The address that will store the donated funds
     /// @param _tokenAddress     Address of the token contract this contract controls
     function EarlyTokenSale(
-        uint _startFundingTime, 
-        uint _endFundingTime, 
-        address _vaultAddress, 
+        uint _startFundingTime,
+        uint _endFundingTime,
+        address _vaultAddress,
         address _tokenAddress
     ) {
         require(_endFundingTime > now);
@@ -52,7 +53,7 @@ contract EarlyTokenSale is TokenController, Controlled {
 
         startFundingTime = _startFundingTime;
         endFundingTime = _endFundingTime;
-        tokenContract = DataBrokerDaoToken(_tokenAddress);
+        tokenContract = NMBToken(_tokenAddress);
         vaultAddress = _vaultAddress;
         paused = false;
     }
@@ -129,12 +130,21 @@ contract EarlyTokenSale is TokenController, Controlled {
 
         // Creates an equal amount of tokens as ether sent. The new tokens are created in the `_owner` address
         require(tokenContract.generateTokens(_owner, tokensPerEther.mul(msg.value)));
-        
+
         return true;
     }
 
     function changeTokenController(address _newController) onlyController {
         tokenContract.changeController(_newController);
+    }
+
+    function changeTokensPerEther(uint256 _newRate) onlyController {
+        require(allowChange);
+        tokensPerEther = _newRate;
+    }
+
+    function allowTransfersEnabled(bool _allow) onlyController {
+        transfersEnabled = _allow;
     }
 
     /// @dev Internal function to determine if an address is a contract
@@ -158,12 +168,13 @@ contract EarlyTokenSale is TokenController, Controlled {
         require(now > endFundingTime || totalCollected >= maximumFunding);
         require(!finalized);
 
-        uint256 reservedTokens = 225000000 * 0.35 * 10**18;      
+        uint256 reservedTokens = 6660000000 * 0.40 * 10**18;
         if (!tokenContract.generateTokens(vaultAddress, reservedTokens)) {
             revert();
         }
 
         finalized = true;
+        allowChange = false;
     }
 
 //////////
